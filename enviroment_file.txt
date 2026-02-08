@@ -1,0 +1,17 @@
+# Database configuration for AuthBrick application
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+
+# Name of the database to be created
+POSTGRES_DB=
+
+# Application database credentials
+APP_DB_USER=
+APP_DB_PASSWORD=
+DB_HOST=
+DB_PORT=
+
+
+# First user credentials
+ADMIN_EMAIL=
+ADMIN_PASSWORD=

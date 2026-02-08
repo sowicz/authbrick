@@ -1,6 +1,15 @@
 from fastapi import FastAPI
+from auth.router import router as auth_router
 
-app = FastAPI()
+app = FastAPI(title="AuthBrick API")
+
+# ============================
+# INCLUDE ROUTERS
+# ============================
+app.include_router(auth_router)
+
+
+
 
 
 @app.get("/")
@@ -11,3 +20,7 @@ def read_root():
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: str | None = None):
     return {"item_id": item_id, "q": q}
+
+
+
+

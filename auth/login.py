@@ -1,12 +1,16 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Response
+from datetime import timedelta
 
-from auth.schemas import LoginRequest, TokenResponse
+from auth.schemas import LoginRequest
 from auth.security import verify_password, create_access_token
 from db.auth.auth_queries import get_user_by_email, update_last_login
 
 
-async def login_user(payload: LoginRequest) -> TokenResponse:
-    user = await get_user_by_email(payload.email)
+ACCESS_TOKEN_EXPIRE_MINUTES = 10
+
+
+async def login_user(payload: LoginRequest, response: Response) -> None:
+    user = await get_user_by_email(payload.login)
 
     if not user:
         raise HTTPException(
@@ -22,9 +26,20 @@ async def login_user(payload: LoginRequest) -> TokenResponse:
 
     await update_last_login(user["id"])
 
-    token = create_access_token({
-        "sub": str(user["id"]),
-        "role": user["role_id"],
-    })
+    access_token = create_access_token(
+        data={
+            "sub": str(user["id"]),
+            "role": user["role_id"],
+        },
+        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
+    )
 
-    return TokenResponse(access_token=token)
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=False,       # In production True (HTTPS)
+        samesite="lax",     # CSRF protection
+        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        path="/",
+    )

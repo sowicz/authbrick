@@ -9,8 +9,8 @@ load_dotenv()
 
 DB_USER = os.getenv("APP_DB_USER")
 DB_PASSWORD = os.getenv("APP_DB_PASSWORD")
-DB_HOST = os.getenv("POSTGRES_HOST")
-DB_PORT = os.getenv("POSTGRES_PORT")
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
 DB_NAME = os.getenv("POSTGRES_DB")
 
 # Connection string asyncpg

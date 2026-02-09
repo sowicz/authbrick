@@ -1,0 +1,4 @@
+LOGIN:
+  - first login verification === later after SMTP setup
+  - password change after 30 days
+  - tests

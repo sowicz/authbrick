@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from auth.router import router as auth_router
 
 app = FastAPI(title="AuthBrick API")
@@ -11,6 +12,14 @@ app.include_router(auth_router)
 
 
 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True, # True for allowing cookies from frontend
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():

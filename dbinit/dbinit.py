@@ -142,6 +142,32 @@ def initialize():
     );
     """)
 
+    # =========================
+    # Refresh tokens table
+    # =========================
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS refresh_tokens (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+        user_id UUID NOT NULL,
+        token_hash TEXT NOT NULL,
+
+        user_agent TEXT,
+        ip_address TEXT,
+
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+        expires_at TIMESTAMPTZ NOT NULL,
+
+        revoked BOOLEAN NOT NULL DEFAULT FALSE,
+
+        CONSTRAINT fk_refresh_user
+            FOREIGN KEY (user_id)
+            REFERENCES users(id)
+            ON DELETE CASCADE
+    );
+    """)
+
     # User code unique index (only for non-null values)
     cur.execute("""
     CREATE UNIQUE INDEX IF NOT EXISTS ux_users_user_code

@@ -1,24 +1,20 @@
 from fastapi import HTTPException, status, Response
-from datetime import timedelta
 
-from auth.schemas import LoginRequest
-from auth.security import verify_password, create_access_token
+from auth.security import (
+    verify_password,
+    create_access_token,
+    create_refresh_token,
+)
 from db.auth.auth_queries import get_user_by_email, update_last_login
 
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 10
 
 
-async def login_user(payload: LoginRequest, response: Response) -> None:
+async def login_user(payload, response: Response) -> None:
     user = await get_user_by_email(payload.login)
 
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials",
-        )
-
-    if not verify_password(payload.password, user["password"]):
+    if not user or not verify_password(payload.password, user["password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
@@ -26,20 +22,31 @@ async def login_user(payload: LoginRequest, response: Response) -> None:
 
     await update_last_login(user["id"])
 
-    access_token = create_access_token(
-        data={
-            "sub": str(user["id"]),
-            "role": user["role_id"],
-        },
-        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
-    )
+    access_token = create_access_token({
+        "sub": str(user["id"]),
+        "role": user["role_id"],
+    })
+
+    refresh_token = create_refresh_token({
+        "sub": str(user["id"]),
+    })
 
     response.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=False,       # In production True (HTTPS)
-        samesite="lax",     # CSRF protection
-        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        secure=False,       # True in production
+        samesite="lax",
+        max_age=60 * 10,
         path="/",
+    )
+
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=False,      # True in production
+        samesite="lax",
+        max_age=60 * 60 * 24 * 30,
+        path="/auth/refresh",
     )

@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from jose import JWTError, jwt
+import hashlib
 import os
 
 JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 10
 REFRESH_TOKEN_EXPIRE_DAYS = 1
 
 pwd_context = CryptContext(
@@ -49,6 +50,11 @@ def decode_token(token: str) -> dict:
         return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
     except JWTError:
         return None
+
+
+
+def hash_refresh_token(token: str) -> str:
+    return hashlib.sha256(token.encode()).hexdigest()
 
 
 # def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:

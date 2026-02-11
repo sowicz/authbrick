@@ -1,4 +1,5 @@
 LOGIN:
   - first login verification === later after SMTP setup
+  - refresh token DATABASE logic !!!
   - password change after 30 days
   - tests

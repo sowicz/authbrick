@@ -10,6 +10,3 @@ class MeResponse(BaseModel):
     id: UUID
     login: str
     role: int
-
-    class Config:
-        from_attributes = True  # jeśli kiedyś przejdziesz na ORM

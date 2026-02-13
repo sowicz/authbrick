@@ -1,2 +1,53 @@
-./venv
+# --- Python (FastAPI) ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv
+venv/
+ENV/
+env/
+build/
+dist/
+
+# --- Node.js (React) ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+/build
+/dist
+.eslintcache
+
+# --- Środowisko i Dane Wrażliwe ---
 .env
+.env.local
+.env.*.local
+# Nie ignoruj .env.example, jeśli go używasz do dokumentacji
+!.env.example
+
+# --- Bazy Danych i Docker ---
+# Jeśli montujesz wolumeny Postgresa do folderu w projekcie:
+docker_postgres_data/
+*.db
+*.sqlite3
+
+# --- Edytory i System ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- Testy i Pokrycie kodu ---
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover

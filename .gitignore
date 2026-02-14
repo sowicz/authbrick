@@ -22,20 +22,19 @@ yarn-error.log*
 /dist
 .eslintcache
 
-# --- Środowisko i Dane Wrażliwe ---
+# --- enviroment ---
 .env
+.env.test
 .env.local
 .env.*.local
-# Nie ignoruj .env.example, jeśli go używasz do dokumentacji
 !.env.example
 
-# --- Bazy Danych i Docker ---
-# Jeśli montujesz wolumeny Postgresa do folderu w projekcie:
+
 docker_postgres_data/
 *.db
 *.sqlite3
 
-# --- Edytory i System ---
+
 .vscode/
 .idea/
 *.swp
@@ -43,7 +42,7 @@ docker_postgres_data/
 .DS_Store
 Thumbs.db
 
-# --- Testy i Pokrycie kodu ---
+# --- Tests ---
 htmlcov/
 .tox/
 .coverage

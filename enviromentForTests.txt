@@ -1,0 +1,10 @@
+name it .env.tests
+
+
+# First user credentials
+ADMIN_EMAIL=
+ADMIN_PASSWORD=
+
+
+# JWT configuration
+JWT_SECRET=

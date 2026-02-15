@@ -31,6 +31,7 @@ class Database:
                 database=DB_NAME,
                 min_size=1,
                 max_size=10,
+                command_timeout=60,
                 )
         return cls._pool
 

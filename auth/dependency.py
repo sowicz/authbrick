@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, status, Request
 from jose import jwt, JWTError
 
-from db.auth.auth_queries import get_user_by_id
+from db.auth.auth_login_queries import get_user_by_id
 import os
 
 

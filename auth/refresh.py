@@ -6,7 +6,7 @@ from auth.security import (
     create_refresh_token,
     hash_refresh_token,
 )
-from db.auth.auth_queries import (
+from db.auth.auth_login_queries import (
     get_user_by_id,
     get_valid_refresh_token,
     revoke_refresh_token,

@@ -6,7 +6,7 @@ from auth.security import (
     create_refresh_token,
     hash_refresh_token,
 )
-from db.auth.auth_queries import (
+from db.auth.auth_login_queries import (
     get_user_by_email,
     update_last_login,
     save_refresh_token,
@@ -21,8 +21,16 @@ async def login_user(payload, request: Request, response: Response) -> None:
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
         )
+    
+    if user.get("first_login"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Password change required",
+        )
+
 
     await update_last_login(user["id"])
+
 
     access_token = create_access_token({
         "sub": str(user["id"]),

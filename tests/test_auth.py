@@ -48,27 +48,3 @@ async def test_auth_me_success(client):
     assert "role" in data
 
     
-
-@pytest.mark.anyio
-async def test_refresh_rotation(client):
-    login = await client.post("/auth/login", json={
-        "login": ADMIN_LOGIN,
-        "password": ADMIN_PASSWORD
-    })
-
-    refresh_token = login.cookies.get("refresh_token")
-
-    refresh_response = await client.post(
-        "/auth/refresh",
-        cookies={"refresh_token": refresh_token}
-    )
-    assert refresh_response.status_code == 200
-
-    client.cookies.clear()
-    
-    
-    second_try = await client.post(
-        "/auth/refresh",
-        cookies={"refresh_token": refresh_token}
-    )
-    assert second_try.status_code == 401

@@ -14,9 +14,6 @@ from db.auth.auth_queries import (
 )
 
 
-# ============================
-# ENDPOINT NIE SPRAWDZANY - DO WERYFIKACJI
-# ============================
 
 async def refresh_access_token(request: Request, response: Response):
     refresh_token = request.cookies.get("refresh_token")

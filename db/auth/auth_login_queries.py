@@ -36,13 +36,7 @@ async def get_user_by_id(user_id: str):
     return await Database.fetchrow(query, user_id)
 
 
-async def update_last_login(user_id):
-    query = """
-    UPDATE users
-    SET last_login = now()
-    WHERE id = $1
-    """
-    await Database.execute(query, user_id)
+
 
 
 async def save_refresh_token(
@@ -97,10 +91,3 @@ async def get_valid_refresh_token(token_hash: str):
     return await Database.fetchrow(query, token_hash)
 
 
-async def revoke_refresh_token(token_hash: str):
-    query = """
-        UPDATE refresh_tokens
-        SET revoked = TRUE
-        WHERE token_hash = $1
-    """
-    await Database.execute(query, token_hash)

@@ -3,4 +3,5 @@ LOGIN:
   - [ ] password change after 30 days
   - [x] tests 
   - [ ] cron job / python script for cleaning revoked / expired refresh tokens
-  - [ ] Test for refresh token rotation (try to use the same refresh token twice, second attempt should fail)
+  - [x] Test for refresh token rotation (try to use the same refresh token twice, second attempt should fail)
+  - [ ]  

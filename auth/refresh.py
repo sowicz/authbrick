@@ -9,10 +9,11 @@ from auth.security import (
 from db.auth.auth_login_queries import (
     get_user_by_id,
     get_valid_refresh_token,
-    revoke_refresh_token,
     save_refresh_token,
 )
-
+from db.auth.auth_update_queries import (
+    revoke_refresh_token
+)
 
 
 async def refresh_access_token(request: Request, response: Response):

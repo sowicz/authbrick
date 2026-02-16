@@ -57,18 +57,15 @@ def hash_refresh_token(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
 
 
-# def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
-#     to_encode = data.copy()
 
-#     expire = datetime.utcnow() + (
-#         expires_delta if expires_delta else timedelta(minutes=15)
-#     )
+def create_first_password_change_token(user_id: str):
+    return create_access_token(
+        {
+            "sub": user_id,
+            "scope": "first_password_change",
+        }
+    )
 
-#     to_encode.update({"exp": expire})
 
-#     encoded_jwt = jwt.encode(
-#         to_encode,
-#         JWT_SECRET,
-#         algorithm=JWT_ALGORITHM,
-#     )
-#     return encoded_jwt
+def require_scope(payload: dict, scope: str):
+    return payload and payload.get("scope") == scope

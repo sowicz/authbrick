@@ -1,4 +1,4 @@
-name it .env.tests
+should be named ".env.tests"
 
 
 # First user credentials

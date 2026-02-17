@@ -4,13 +4,17 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from auth.dependency import get_current_user
 from auth.dependency import get_current_user
 from auth.security import decode_token, hash_password, require_scope, verify_password
+from db.auth.auth_login_queries import get_user_by_id
 from db.auth.auth_update_queries import (
     is_first_login,
     update_user_password,
     disable_first_login,
     revoke_all_user_refresh_tokens,
 )
-
+from auth.password_policy import (
+    validate_password_strength,
+    validate_password_not_reused,
+)
 
 security = HTTPBearer()
 
@@ -36,6 +40,11 @@ async def first_password_change(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="First login already completed",
         )
+    
+    user = await get_user_by_id(user_id)
+
+    validate_password_strength(payload.new_password)
+    validate_password_not_reused(payload.new_password, user["password"])
 
     hashed = hash_password(new_password)
 
@@ -55,8 +64,11 @@ async def password_change(
     if not verify_password(current_password, user["password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid current password",
+            detail="Invalid credentials",
         )
+    
+    validate_password_strength(new_password)
+    validate_password_not_reused(new_password, user["password"])
 
     hashed = hash_password(new_password)
 

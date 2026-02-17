@@ -69,3 +69,5 @@ def create_first_password_change_token(user_id: str):
 
 def require_scope(payload: dict, scope: str):
     return payload and payload.get("scope") == scope
+
+

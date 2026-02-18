@@ -198,6 +198,68 @@ def initialize():
     ))
 
 
+    # =========================
+    # SMTP configuration table
+    # =========================
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS smtp_config (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+        smtp_host TEXT NOT NULL,
+        smtp_port INTEGER NOT NULL CHECK (smtp_port > 0),
+
+        smtp_user TEXT NOT NULL,
+        smtp_password TEXT NOT NULL, -- encrypted
+
+        from_email TEXT NOT NULL,
+
+        use_tls BOOLEAN NOT NULL DEFAULT TRUE,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+
+        created_at TIMESTAMPTZ DEFAULT now(),
+        updated_at TIMESTAMPTZ DEFAULT now()
+    );
+    """)
+
+    # =========================
+    # MFA purpose enum
+    # =========================
+    cur.execute("""
+    DO $$
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1 FROM pg_type WHERE typname = 'mfa_purpose'
+        ) THEN
+            CREATE TYPE mfa_purpose AS ENUM (
+                'mfa',
+                'password_reset',
+                'email_verification'
+            );
+        END IF;
+    END
+    $$;
+    """)
+
+    # =========================
+    # MFA codes table
+    # =========================
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS mfa_codes (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        code_hash TEXT NOT NULL,
+
+        purpose mfa_purpose NOT NULL,
+
+        expires_at TIMESTAMPTZ NOT NULL,
+        attempts INTEGER NOT NULL DEFAULT 0 CHECK (attempts >= 0),
+
+        created_at TIMESTAMPTZ DEFAULT now()
+    );
+    """)
+
+
     cur.close()
     conn.close()
     print("✅ Database initialized successfully")

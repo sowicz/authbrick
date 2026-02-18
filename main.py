@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from auth.router import router as auth_router
+from smtp.smtp_router import router as smtp_router
 
 app = FastAPI(title="AuthBrick API")
 
@@ -8,6 +9,7 @@ app = FastAPI(title="AuthBrick API")
 # INCLUDE ROUTERS
 # ============================
 app.include_router(auth_router)
+app.include_router(smtp_router)
 
 
 
@@ -23,12 +25,6 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
-    return {"item_id": item_id, "q": q}
-
 
 
 

@@ -4,8 +4,6 @@ from dotenv import load_dotenv
 from db.database import Database
 
 
-load_dotenv(".env.tests")  # Load test environment variables
-
 
 from main import app 
 

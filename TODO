@@ -4,4 +4,4 @@ LOGIN:
   - [x] first tests 
   - [ ] cron job / python script for cleaning revoked / expired refresh tokens
   - [x] Test for refresh token rotation (try to use the same refresh token twice, second attempt should fail)
-  - [ ] tests for changes password
+  - [ ] veirify smtp endpoints 

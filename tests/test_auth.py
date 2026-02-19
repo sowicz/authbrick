@@ -2,7 +2,7 @@ import os
 import pytest
 from dotenv import load_dotenv
 
-load_dotenv(".env.tests")
+load_dotenv(".env.tests", override=True)  # Load test environment variables
 
 ADMIN_LOGIN = os.getenv("ADMIN_EMAIL")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")

@@ -3,7 +3,7 @@ from auth.dependency import get_current_user
 
 from db.smtp.smtp_queries import insert_smtp_config, get_active_smtp
 from db.smtp.smtp_update_queries import update_smtp_config
-from db.smtp.smtp_delete_queries import delete_smtp_config
+from db.smtp.smtp_delete_queries import delete_smtp_config_by_id
 
 from smtp.smtp_encrypt import encrypt_secret, decrypt_secret
 
@@ -46,8 +46,15 @@ async def update_smtp(payload, user: dict = Depends(get_current_user)):
     return {"status": "smtp_config_updated"}
 
 
-async def remove_smtp(user:dict = Depends(get_current_user)):
-    await delete_smtp_config()
+async def remove_smtp(config_id: str,user:dict = Depends(get_current_user)):
+    deleted = await delete_smtp_config_by_id(config_id)
+    
+    if deleted == "DELETE 0":
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="SMTP config not found"
+        )
+
     return {"status": "smtp_config_deleted"}
 
 

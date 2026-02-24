@@ -20,3 +20,7 @@ class SMTPUpdateRequest(BaseModel):
     from_email: EmailStr | None = None
     use_tls: bool | None = None
     is_active: bool | None = None
+
+
+class SMTPDeleteRequest(BaseModel):
+    config_id: UUID

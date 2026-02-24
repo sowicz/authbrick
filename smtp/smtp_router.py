@@ -8,7 +8,7 @@ from .smtp_service import (
     remove_smtp,
     get_smtp,
 )
-from .smtp_schemas import SMTPCreateRequest, SMTPUpdateRequest
+from .smtp_schemas import SMTPCreateRequest, SMTPUpdateRequest, SMTPDeleteRequest
 
 router = APIRouter(prefix="/admin/smtp", tags=["SMTP"])
 
@@ -26,9 +26,9 @@ async def update_config(payload: SMTPUpdateRequest, user=Depends(get_current_use
 
 
 @router.delete("/config")
-async def delete_config(user=Depends(get_current_user)):
+async def delete_config(payload: SMTPDeleteRequest,user=Depends(get_current_user)):
     require_admin(user)
-    return await remove_smtp()
+    return await remove_smtp(payload.config_id)
 
 
 @router.get("/config")

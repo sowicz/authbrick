@@ -19,3 +19,8 @@ class FirstPasswordChangeRequest(BaseModel):
 class PasswordChangeRequest(BaseModel):
     current_password: str
     new_password: str
+
+
+class ExpiredPasswordChangeRequest(BaseModel):
+    current_password: str
+    new_password: str

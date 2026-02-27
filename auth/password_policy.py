@@ -1,7 +1,12 @@
 import re
 from fastapi import HTTPException, status
+from datetime import datetime, timezone
 from auth.security import verify_password
 
+
+# PASSWORD_MAX_AGE_SECONDS = 240
+
+PASSWORD_MAX_AGE_SECONDS = 60 * 60 * 24 * 90  # 90 days
 
 def validate_password_strength(password: str):
     if len(password) < 8 or len(password) > 24:
@@ -35,3 +40,16 @@ def validate_password_not_reused(new_password: str, current_hash: str):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="New password must be different from current password",
         )
+
+
+
+def password_expired(user: dict) -> bool:
+    last_change = user.get("last_pass_change")
+
+    if last_change is None:
+        return True
+
+    now = datetime.now(timezone.utc)
+    age_seconds = (now - last_change).total_seconds()
+
+    return age_seconds > PASSWORD_MAX_AGE_SECONDS

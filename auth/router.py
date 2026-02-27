@@ -1,7 +1,12 @@
 from fastapi import APIRouter, Response, Request, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from auth import change_password
-from auth.schemas import FirstPasswordChangeRequest, LoginRequest, PasswordChangeRequest
+from auth.schemas import (
+    FirstPasswordChangeRequest, 
+    LoginRequest, 
+    PasswordChangeRequest, 
+    ExpiredPasswordChangeRequest
+)
 from auth.login import login_user
 from auth.refresh import refresh_access_token
 from auth.dependency import get_current_user
@@ -25,6 +30,18 @@ async def first_password_change_endpoint(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
     return await change_password.first_password_change(
+        new_password=payload.new_password,
+        credentials=credentials,
+    )
+
+
+@router.post("/expired-password-change")
+async def expired_password_change_endpoint(
+    payload: ExpiredPasswordChangeRequest,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    return await change_password.expired_password_change(
+        current_password=payload.current_password,
         new_password=payload.new_password,
         credentials=credentials,
     )

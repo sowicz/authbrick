@@ -66,12 +66,53 @@ async def password_change(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
         )
-    
     validate_password_strength(new_password)
     validate_password_not_reused(new_password, user["password"])
 
     hashed = hash_password(new_password)
 
     await update_user_password(user["id"], hashed)
+
+    return {"status": "password_updated"}
+
+
+
+async def expired_password_change(
+    current_password: str,
+    new_password: str,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    token = credentials.credentials
+    payload = decode_token(token)
+
+    if not require_scope(payload, "password_expired_change"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token scope",
+        )
+
+    user_id = payload["sub"]
+    user = await get_user_by_id(user_id)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    if not verify_password(current_password, user["password"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid current password",
+        )
+
+    validate_password_strength(new_password)
+    validate_password_not_reused(new_password, user["password"])
+
+    hashed = hash_password(new_password)
+
+    await update_user_password(user_id, hashed)
+
+    await revoke_all_user_refresh_tokens(user_id)
 
     return {"status": "password_updated"}

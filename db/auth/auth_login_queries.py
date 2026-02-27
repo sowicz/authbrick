@@ -12,7 +12,8 @@ async def get_user_by_email(email: str):
         email,
         password,
         role_id,
-        first_login
+        first_login,
+        last_pass_change
     FROM users
     WHERE email = $1
     """

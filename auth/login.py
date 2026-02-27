@@ -1,7 +1,9 @@
 from fastapi import HTTPException, status, Response, Request
 
+from auth.password_policy import password_expired
 from auth.security import (
     create_first_password_change_token,
+    create_expired_password_change_token,
     verify_password,
     create_access_token,
     create_refresh_token,
@@ -28,11 +30,20 @@ async def login_user(payload, request: Request, response: Response) -> None:
     
     if user["first_login"]:
         temp_token = create_first_password_change_token(str(user["id"]))
-
         raise HTTPException(
             status_code=403,
             detail={
                 "code": "FIRST_PASSWORD_CHANGE_REQUIRED",
+                "token": temp_token,
+            },
+        )
+
+    if password_expired(user):
+        temp_token = create_expired_password_change_token(str(user["id"]))
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "code": "PASSWORD_EXPIRED",
                 "token": temp_token,
             },
         )

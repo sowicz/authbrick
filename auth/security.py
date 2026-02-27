@@ -66,6 +66,14 @@ def create_first_password_change_token(user_id: str):
         }
     )
 
+def create_expired_password_change_token(user_id: str):
+    return create_access_token(
+        {
+            "sub": user_id,
+            "scope": "password_expired_change",
+        }
+    )
+
 
 def require_scope(payload: dict, scope: str):
     return payload and payload.get("scope") == scope

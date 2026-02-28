@@ -14,6 +14,7 @@ from db.auth.auth_update_queries import (
 from auth.password_policy import (
     validate_password_strength,
     validate_password_not_reused,
+    is_password_recently_changed,
 )
 
 security = HTTPBearer()
@@ -33,6 +34,12 @@ async def first_password_change(
             detail="Invalid token scope",
         )
 
+    if is_password_recently_changed(payload):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot change password again so soon",
+        )
+    
     user_id = payload["sub"]
 
     if not await is_first_login(user_id):
@@ -43,8 +50,8 @@ async def first_password_change(
     
     user = await get_user_by_id(user_id)
 
-    validate_password_strength(payload.new_password)
-    validate_password_not_reused(payload.new_password, user["password"])
+    validate_password_strength(new_password)
+    validate_password_not_reused(new_password, user["password"])
 
     hashed = hash_password(new_password)
 
@@ -65,6 +72,12 @@ async def password_change(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
+        )
+    
+    if is_password_recently_changed(user):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot change password again so soon",
         )
     validate_password_strength(new_password)
     validate_password_not_reused(new_password, user["password"])
@@ -104,6 +117,12 @@ async def expired_password_change(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid current password",
+        )
+
+    if is_password_recently_changed(user):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot change password again so soon",
         )
 
     validate_password_strength(new_password)

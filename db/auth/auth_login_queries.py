@@ -29,7 +29,8 @@ async def get_user_by_id(user_id: str):
             role_id,
             first_login,
             last_login,
-            created_at
+            created_at,
+            last_pass_change
         FROM users
         WHERE id = $1
         LIMIT 1

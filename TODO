@@ -1,7 +1,11 @@
 LOGIN:
   - [ ] first login verification === later after SMTP setup
-  - [ ] password change after 90 days
+  - [x] password change after 90 days
   - [x] first tests 
   - [ ] cron job / python script for cleaning revoked / expired refresh tokens
   - [x] Test for refresh token rotation (try to use the same refresh token twice, second attempt should fail)
-  - [x] veirify smtp endpoints 
+  - [x] verify smtp endpoints 
+  - [ ] verify password change token - can be changed after chang imidiatly - 
+  There is high risk of abuse if the token is not single-use, 
+  but implementing single-use tokens requires additional state management 
+  (e.g., storing token identifiers in the database and marking them as used). 
